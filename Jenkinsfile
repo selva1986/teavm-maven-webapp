@@ -22,15 +22,12 @@ pipeline {
                 sh 'mvn package'
             }
         }
-	/* stage('Notify') {
+	stage('Deploy') {
             steps {
-		    if {
-			    slackSend channel: '#devopsdeepdive_batch3', message: 'Build is successful', teamDomain: 'devopsdeepdivebatch', tokenCredentialId: 'slack_batch12' 
-            }
-		 else {
-			 slackSend channel: '#devopsdeepdive_batch3', message: 'Build is failed', teamDomain: 'devopsdeepdivebatch', tokenCredentialId: 'slack_batch12'
-		 }
-	 }
-        } */
+        sshagent(['tomcat_deploy']) {
+                    sh 'scp -o StrictHostKeyChecking=no /var/lib/jenkins/workspace/maven_deploy/target/teavm-maven-webapp-1.0-SNAPSHOT.war tomcat@18.183.65.184:/opt/apache-tomcat-9.0.69/webapps'
+        }
+    } 
+    }
     }
 }
